@@ -14,12 +14,12 @@ const center = {
 };
 
 const locations = [
-  { lat: 17.385044, lng: 78.486671 },
-  { lat: 28.704060, lng: 77.102493 },
-  { lat: 26.912434, lng: 75.787270 },
-  { lat: 13.082680, lng: 80.270721 },
-  { lat: 11.016844, lng: 76.955833 },
-  { lat: 24.585445, lng: 73.712479 },
+  { lat: 17.385044, lng: 78.486671 }, // Hyderabad
+  { lat: 28.704060, lng: 77.102493 }, // Delhi
+  { lat: 26.912434, lng: 75.787270 }, // Jaipur
+  { lat: 13.082680, lng: 80.270721 }, // Chennai
+  { lat: 11.016844, lng: 76.955833 }, // Coimbatore
+  { lat: 24.585445, lng: 73.712479 }, // Udaipur
 ];
 
 const Dashboard = () => {
@@ -47,7 +47,7 @@ const Dashboard = () => {
 
       {/* Map */}
       <div style={{ margin: '1rem', borderRadius: '12px', overflow: 'hidden' }}>
-        <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
           <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={4}>
             {locations.map((loc, index) => (
               <Marker key={index} position={loc} />

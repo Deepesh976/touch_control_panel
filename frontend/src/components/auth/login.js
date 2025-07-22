@@ -122,7 +122,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     toast.success('Login successful!');
-    navigate('/user', { replace: true });
+    navigate('/dashboard', { replace: true });
   };
 
   return (

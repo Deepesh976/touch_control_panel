@@ -9,6 +9,11 @@ import AtmReport from './pages/atmreport';
 import PanelReport from './pages/panelreport';
 import User from './pages/user';
 import Device from './pages/device';
+import AddUser from './pages/adduser';
+import AddDevice from './pages/adddevice';
+import EditDevice from './pages/editdevice';
+import AddRechargeUnit from './pages/addrechargeunit';
+import EditRechargeUnit from './pages/editrechargeunit';
 
 function App() {
   return (
@@ -22,6 +27,11 @@ function App() {
         <Route path="/panelreport" element={<PanelReport />} />
         <Route path="/user" element={<User />} />
         <Route path="/device" element={<Device />} />
+        <Route path="/adduser" element={<AddUser />} />
+        <Route path="/adddevice" element={<AddDevice />} />
+        <Route path="/editdevice" element={<EditDevice />} />
+        <Route path="/addrechargeunit" element={<AddRechargeUnit />} />
+        <Route path="/editrechargeunit" element={<EditRechargeUnit />} />
       </Routes>
     </Router>
   );

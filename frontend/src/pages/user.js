@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/navbar/navbar';
 import { FaUsers } from 'react-icons/fa';
 import DataTable from 'react-data-table-component';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { FiDownload } from 'react-icons/fi';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const userData = [
@@ -50,106 +52,151 @@ const userData = [
   },
 ];
 
-// Table columns
-const columns = [
-  { name: '#', selector: row => row.id, sortable: true, center: true, wrap: true, maxWidth: '50px' },
-  { name: 'Name', selector: row => row.name, sortable: true, wrap: true, center: true },
-  { name: 'Mobile', selector: row => row.mobile, sortable: true, wrap: true, center: true },
-  { name: 'City', selector: row => row.city, sortable: true, wrap: true, center: true },
-  { name: 'State', selector: row => row.state, sortable: true, wrap: true, center: true },
-  { name: 'User ID', selector: row => row.userId, sortable: true, wrap: true, center: true },
-  { name: 'Created', selector: row => row.created, sortable: true, wrap: true, center: true },
-  { name: 'ATMs', selector: row => row.atm, sortable: true, wrap: true, center: true },
-  { name: 'RO Panels', selector: row => row.roPanel, sortable: true, wrap: true, center: true },
-  { name: 'Recharges', selector: row => row.recharge, sortable: true, wrap: true, center: true },
-  { name: 'Due Date', selector: row => row.dueDate, sortable: true, wrap: true, center: true },
-  {
-    name: 'Status',
-    selector: row => row.status,
-    sortable: true,
-    center: true,
-    wrap: true,
-    cell: row => (
-      <span
-        className={`badge px-3 py-2 rounded-pill fw-semibold ${
-          row.status === 'Active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'
-        }`}
-      >
-        {row.status}
-      </span>
-    ),
-  },
-];
-
-// Custom styles for DataTable
-const customStyles = {
-  table: {
-    style: {
-      tableLayout: 'fixed',
-      width: '100%',
-    },
-  },
-  headCells: {
-    style: {
-      fontWeight: '600',
-      fontSize: '13px',
-      backgroundColor: '#f1f3f5',
-      textAlign: 'center',
-      whiteSpace: 'normal',
-      wordBreak: 'break-word',
-      padding: '8px',
-    },
-  },
-  cells: {
-    style: {
-      fontSize: '13px',
-      textAlign: 'center',
-      whiteSpace: 'normal',
-      wordBreak: 'break-word',
-      padding: '8px',
-    },
-  },
-  rows: {
-    style: {
-      minHeight: '52px',
-    },
-  },
-};
-
 const User = () => {
+  const navigate = useNavigate();
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleAddUser = () => navigate('/adduser');
+
+  const handleDownload = () => {
+    const headers = ['ID,Name,Mobile,City,State,UserID,Created,ATMs,RO Panels,Recharges,Due Date,Status'];
+    const rows = userData.map(row => [
+      row.id, `"${row.name}"`, row.mobile, row.city, row.state, row.userId,
+      row.created, row.atm, row.roPanel, row.recharge, row.dueDate, row.status
+    ].join(','));
+    const csvContent = [...headers, ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'users.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const columns = [
+    { name: '#', selector: row => row.id, sortable: true, center: true, wrap: true, maxWidth: '50px' },
+    {
+      name: 'Name',
+      selector: row => row.name,
+      sortable: true,
+      center: true,
+      wrap: true,
+      cell: row => (
+        <span
+          onClick={() => setSelectedUser(row)}
+          style={{
+            color: '#0d6efd',
+            cursor: 'pointer',
+            textDecoration: 'underline',
+            fontWeight: 500,
+          }}
+        >
+          {row.name}
+        </span>
+      ),
+    },
+    { name: 'Mobile', selector: row => row.mobile, sortable: true, center: true, wrap: true },
+    { name: 'City', selector: row => row.city, sortable: true, center: true, wrap: true },
+    { name: 'State', selector: row => row.state, sortable: true, center: true, wrap: true },
+    { name: 'User ID', selector: row => row.userId, sortable: true, center: true, wrap: true },
+    { name: 'Created', selector: row => row.created, sortable: true, center: true, wrap: true },
+    { name: 'ATMs', selector: row => row.atm, sortable: true, center: true, wrap: true },
+    { name: 'RO Panels', selector: row => row.roPanel, sortable: true, center: true, wrap: true },
+    { name: 'Recharges', selector: row => row.recharge, sortable: true, center: true, wrap: true },
+    { name: 'Due Date', selector: row => row.dueDate, sortable: true, center: true, wrap: true },
+    {
+      name: 'Status',
+      selector: row => row.status,
+      sortable: true,
+      center: true,
+      wrap: true,
+      cell: row => (
+        <span
+          className={`badge px-3 py-2 rounded-pill fw-semibold ${row.status === 'Active'
+            ? 'bg-success-subtle text-success'
+            : 'bg-danger-subtle text-danger'
+            }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+  ];
+
+  const customStyles = {
+    table: {
+      style: { tableLayout: 'fixed', width: '100%' },
+    },
+    headCells: {
+      style: {
+        fontWeight: '600',
+        fontSize: '13px',
+        backgroundColor: '#f1f3f5',
+        textAlign: 'center',
+        whiteSpace: 'normal',
+        wordBreak: 'break-word',
+        padding: '8px',
+      },
+    },
+    cells: {
+      style: {
+        fontSize: '13px',
+        textAlign: 'center',
+        whiteSpace: 'normal',
+        wordBreak: 'break-word',
+        padding: '8px',
+      },
+    },
+    rows: { style: { minHeight: '52px' } },
+  };
+
   return (
     <div style={{ backgroundColor: '#f5f7fa', minHeight: '100vh', paddingTop: '6rem' }}>
       <Navbar />
 
       <section className="container-fluid px-4 pb-4">
-        {/* Info Cards */}
         <div className="row g-4 mb-4">
-          <div className="col-md-6">
-            <InfoCard title="Total Users" count={28} />
-          </div>
-          <div className="col-md-6">
-            <InfoCard title="Active Users" count={28} />
-          </div>
+          <div className="col-md-6"><InfoCard title="Total Users" count={28} /></div>
+          <div className="col-md-6"><InfoCard title="Active Users" count={28} /></div>
         </div>
 
-        {/* Data Table */}
         <div className="bg-white rounded shadow p-3">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="mb-0 text-primary fw-semibold">User List</h5>
-            <Button variant="primary">+ Add User</Button>
+            <div className="d-flex gap-2">
+              <Button variant="primary" onClick={handleAddUser}>+ Add User</Button>
+              <Button variant="primary" onClick={handleDownload}><FiDownload className="me-2" />Download</Button>
+            </div>
           </div>
 
-          <div className="table-responsive">
-            <DataTable
-              columns={columns}
-              data={userData}
-              pagination
-              noHeader
-              customStyles={customStyles}
-            />
-          </div>
+          <DataTable
+            columns={columns}
+            data={userData}
+            pagination
+            noHeader
+            customStyles={customStyles}
+          />
         </div>
       </section>
+
+      {selectedUser && (
+        <div style={modalStyles.overlay}>
+          <div style={modalStyles.modal}>
+            <h4 style={{ marginBottom: '10px' }}>{selectedUser.name}</h4>
+            <p><strong>Mobile:</strong> {selectedUser.mobile}</p>
+            <p><strong>City:</strong> {selectedUser.city}</p>
+            <p><strong>State:</strong> {selectedUser.state}</p>
+            <p><strong>User ID:</strong> {selectedUser.userId}</p>
+            <p><strong>Created:</strong> {selectedUser.created}</p>
+            <p><strong>Due Date:</strong> {selectedUser.dueDate}</p>
+            <p><strong>Status:</strong> {selectedUser.status}</p>
+            <div style={{ marginTop: '20px', textAlign: 'right' }}>
+              <Button variant="secondary" onClick={() => setSelectedUser(null)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -168,5 +215,27 @@ const InfoCard = ({ title, count }) => (
     </div>
   </div>
 );
+
+const modalStyles = {
+  overlay: {
+    position: 'fixed',
+    top: 0, left: 0,
+    width: '100%', height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: '20px 30px',
+    minWidth: '320px',
+    maxWidth: '500px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+    animation: 'fadeIn 0.3s ease-in-out',
+  },
+};
 
 export default User;
